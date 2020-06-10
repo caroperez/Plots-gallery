@@ -1,0 +1,93 @@
+---
+title: "R plots gallery"
+subtitle: 'ggplot2 and vanilla'
+author: 'Oriol Caro'
+date: '`r format(Sys.Date(),"%e de %B, %Y")`'
+output:
+  pdf_document:
+    keep_tex: yes
+    toc: yes
+    toc_depth: 3
+    number_sections: true
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    number_sections: true
+lang: es  # es: español, ca: catala, en: english, ...
+#header-includes: \usepackage[spanish]{babel}
+#params:
+#  file1: heart1.txt
+#  fold: dataset
+#  p.train: !r 2/3
+#  subtitulo:  
+#  seed.train: 12345
+#  seed.clsfier: 1234567
+#bibliography: pecs.bib  
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages, echo = FALSE}
+if (!require(ggplot2)) install.packages("ggplot2")
+```
+
+
+# **Violin plots**
+
+A violin diagram is used to visualize the distribution of the data and its probability density.
+
+This graph is a combination of a box-and-whisker diagram and a density plot rotated and placed on each side, to show how the data are distributed. The thick black bar in the center represents the interquartile interval, the thin black bar extending from it represents 95% of the confidence intervals, and the white point is the median.
+
+Box and whiskers plots are limited to their display of the data, as their visual simplicity tends to hide significant details about how values are distributed in the data. For example, with box-and-whisker diagrams you cannot see whether the distribution is bimodal or multimodal. While violin plots include more information, they can be much more crowded than box and whiskers plots. 
+
+*Un diagrama de violín se utiliza para visualizar la distribución de los datos y su densidad de probabilidad.*
+
+*Este gráfico es una combinación de un diagrama de cajas y bigotes y un diagrama de densidad girado y colocado a cada lado, para mostrar la forma de distribución de los datos. La barra negra gruesa en el centro representa el intervalo intercuartil, la barra negra fina que se extiende desde ella, representa el 95 % de los intervalos de confianza, y el punto blanco es la mediana.*
+
+*Los diagramas de cajas y bigotes están limitados a su visualización de los datos, ya que su simplicidad visual tiende a ocultar detalles significativos sobre cómo se distribuyen los valores en los datos. Por ejemplo, con los diagramas de cajas y bigotes no puedes ver si la distribución es bimodal o multimodal. Si bien los diagramas de violín incluyen más información, pueden estar mucho más abarrotados que los diagramas de cajas y bigotes.*
+
+```{r violin_plots_data}
+# seed
+set.seed(1357)
+
+# data columns
+groups <- rep(c('M', 'F', 'T'), each = 50)
+var1 <- rnorm(50, 25.4, 2.4)
+var2 <- rnorm(50, 23.5, 8)
+var3 <- rnorm(50, 4.5, 1.4)
+
+
+# dataframe
+df <- data.frame(groups = groups, Variable = c(var1, var2, var3))
+df$groups <- as.factor(df$groups)
+head(df)
+```
+
+```{r violin_plots_vanilla}
+# vanilla R violin plot
+# package is essential
+if (!require(vioplot)) install.packages("vioplot")
+
+# plot data
+# need to segregates values in objects
+df_M <- df$Variable[df$groups == "M"]
+df_F <- df$Variable[df$groups == "F"]
+df_T <- df$Variable[df$groups == "T"]
+
+# doing plot
+vioplot(df_M, df_F, df_T, main = "Violin plot", 
+        col = c("red", "blue", "pink"),
+        ylab = "Value", xlab = "groups",
+        ylim = c(0, 45))
+```
+
+```{r violin_plot_ggplot}
+# package is essential 
+if (!require(ggplot2)) install.packages("ggplot2")
+
+gpp <- ggplot(df, aes(x = groups, y = Variable, fill = groups))
+gpp + geom_violin() + ggtitle("Violin plot") +
+  xlab("Groups") + ylab("Variables")
+```
+

@@ -23,7 +23,7 @@ lang: es  # es: español, ca: catala, en: english, ...
 #  subtitulo:  
 #  seed.train: 12345
 #  seed.clsfier: 1234567
-#bibliography: pecs.bib  
+#bibliography: *.bib  
 editor_options: 
   chunk_output_type: console
 ---

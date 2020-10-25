@@ -30,6 +30,9 @@ editor_options:
 
 ```{r packages, echo = FALSE}
 if (!require(ggplot2)) install.packages("ggplot2")
+if (!require(ggpubr)) install.packages("ggpubr")
+if (!require(hrbrthemes)) install.packages("hrbrthemes")
+if (!require(gridExtra)) intall.packages("gridExtra")
 ```
 
 
@@ -91,3 +94,77 @@ gpp + geom_violin() + ggtitle("Violin plot") +
   xlab("Groups") + ylab("Variables")
 ```
 
+
+# **Density plot**
+
+As known as Kernel Density Plots, Density Trace Graph., a density plot is a representation of the distribution of a numeric variable. It uses a kernel density estimate to show the probability density function of the variable.
+
+Density plots are used to study the distribution of one or a few variables. Checking the distribution of your variables one by one is probably the first task you should do when you get a new dataset. It delivers a good quantity of information. 
+
+*Como se conoce como Gráficos de Densidad del Núcleo, Gráfico de Trazas de Densidad, un gráfico de densidad es una representación de la distribución de una variable numérica. Utiliza una estimación de la densidad del núcleo para mostrar la función de densidad de probabilidad de la variable.*
+
+*Las gráficas de densidad se utilizan para estudiar la distribución de una o unas pocas variables. Comprobar la distribución de las variables una por una es probablemente la primera tarea que se debe hacer cuando se obtiene un nuevo conjunto de datos. Entrega una buena cantidad de información.*
+
+###**Most basic**
+
+```{r dentsity_plot_basic}
+# basic density distribution plot
+
+# data
+var1 <- rnorm(500, 35, 3)
+var2 <- rnorm(50, 15, 1)
+var3 <- var1 - var2
+df <- data.frame(x = var3, y = var1, z = var2)
+
+# Make the histogram
+plot1 <- ggplot(df, aes(x = x)) +
+    geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) + ggtitle("Basic density plot")
+plot2 <- ggplot(df, aes(x = y)) +
+    geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) + ggtitle("Basic density plot")
+plot3 <- ggplot(df, aes(x = z)) +
+    geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) + 
+  ggtitle("Basic density plot with theme_ipsum") +
+  theme_ipsum()
+
+# for 3 plots in a row
+grid.arrange(plot1, plot2, plot3 + rremove("x.text"), 
+             ncol = 1, nrow = 3)
+
+```
+
+###**Density with** *geom_density*
+
+```{r density_plot_with_geomdensity}
+# density plot _with geomdensity
+
+# data
+var1 <- rnorm(1000)
+var2 <- rnorm(1000, 2)
+df <- data.frame(x1 = var1, x2 = var2)
+
+# plot density
+plotdata <- ggplot(df, aes(x = x)) +
+  # Top
+  geom_density(aes(x = var1, , y = ..density..), fill="#69b3a2" ) +
+  geom_label(aes(x=4.5, y = 0.25, label="variable1"), color="#69b3a2") +
+  # Bottom
+  geom_density(aes(x = var2, , y = -..density..), fill= "#404080") +
+  geom_label(aes(x=4.5, y = -0.25, label="variable2"), color="#404080") +
+  theme_ipsum() + xlab("value of x")
+
+# show data
+plotdata
+```
+
+```{r histogram_density_plot_with_geomdensity}
+plotdata <- ggplot(df, aes(x = x)) +
+  geom_histogram( aes(x = var1, y = ..density..), fill="#69b3a2", bins = 30) +
+  geom_label( aes(x=4.5, y=0.25, label="variable1"), color="#69b3a2") +
+  geom_histogram( aes(x = var2, y = -..density..), fill= "#404080", bins = 30) +
+  geom_label( aes(x=4.5, y=-0.25, label="variable2"), color="#404080") +
+  theme_ipsum() +
+  xlab("value of x")
+
+# show data
+plotdata
+```

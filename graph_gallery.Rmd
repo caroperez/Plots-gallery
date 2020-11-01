@@ -4,13 +4,13 @@ subtitle: 'ggplot2 and vanilla'
 author: 'Oriol Caro'
 date: '`r format(Sys.Date(),"%e de %B, %Y")`'
 output:
-  pdf_document:
-    keep_tex: yes
+  html_document:
+    df_print: paged
     toc: yes
     toc_depth: 3
     number_sections: true
-  html_document:
-    df_print: paged
+  pdf_document:
+    keep_tex: yes
     toc: yes
     toc_depth: 3
     number_sections: true
@@ -33,6 +33,10 @@ if (!require(ggplot2)) install.packages("ggplot2")
 if (!require(ggpubr)) install.packages("ggpubr")
 if (!require(hrbrthemes)) install.packages("hrbrthemes")
 if (!require(gridExtra)) intall.packages("gridExtra")
+if (!require(dplyr)) install.packages("dplyr")
+if (!require(tidyr)) install.packages("tidyr")
+if (!require(viridis)) install.packages("viridis")
+if (!require(reshape)) install.packages("reshape")
 ```
 
 
@@ -156,15 +160,26 @@ plotdata <- ggplot(df, aes(x = x)) +
 plotdata
 ```
 
-```{r histogram_density_plot_with_geomdensity}
-plotdata <- ggplot(df, aes(x = x)) +
-  geom_histogram( aes(x = var1, y = ..density..), fill="#69b3a2", bins = 30) +
-  geom_label( aes(x=4.5, y=0.25, label="variable1"), color="#69b3a2") +
-  geom_histogram( aes(x = var2, y = -..density..), fill= "#404080", bins = 30) +
-  geom_label( aes(x=4.5, y=-0.25, label="variable2"), color="#404080") +
-  theme_ipsum() +
-  xlab("value of x")
+### **Density with several groups.**
 
-# show data
-plotdata
+```{r}
+# data
+var1 <- rnorm(10, 5, 1)
+var2 <- rnorm(10, 5, 3)
+var3 <- rnorm(10, 9, 1)
+var4 <- rnorm(10, 1, .1)
+var5 <- rnorm(10, 8, 8)
+df <- data.frame(v1 = var1, v2 = var2, v3 = var3, v4 = var4, v5 = var5)
+
+df_plot <- melt(df)
+
+# ploting
+pt <- ggplot(df_plot, aes(x = value, group = variable, fill = variable)) +
+  geom_density(adjust = 1.5) + xlab("Value") + ggtitle("Density with several groups")
+
+
+pt
+
 ```
+
+### **Density stack with several groups**
